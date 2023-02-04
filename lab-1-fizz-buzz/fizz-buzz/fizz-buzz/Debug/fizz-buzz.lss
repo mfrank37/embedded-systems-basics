@@ -1,0 +1,318 @@
+
+fizz-buzz.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000188  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000001dc  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000001dc  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000020c  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  00000248  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   0000055e  00000000  00000000  00000268  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 0000036d  00000000  00000000  000007c6  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000002be  00000000  00000000  00000b33  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  00000df4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000002d9  00000000  00000000  00000e18  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    0000025c  00000000  00000000  000010f1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000010  00000000  00000000  0000134d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	09 c0       	rjmp	.+18     	; 0x14 <__ctors_end>
+   2:	0e c0       	rjmp	.+28     	; 0x20 <__bad_interrupt>
+   4:	0d c0       	rjmp	.+26     	; 0x20 <__bad_interrupt>
+   6:	0c c0       	rjmp	.+24     	; 0x20 <__bad_interrupt>
+   8:	0b c0       	rjmp	.+22     	; 0x20 <__bad_interrupt>
+   a:	0a c0       	rjmp	.+20     	; 0x20 <__bad_interrupt>
+   c:	09 c0       	rjmp	.+18     	; 0x20 <__bad_interrupt>
+   e:	08 c0       	rjmp	.+16     	; 0x20 <__bad_interrupt>
+  10:	07 c0       	rjmp	.+14     	; 0x20 <__bad_interrupt>
+  12:	06 c0       	rjmp	.+12     	; 0x20 <__bad_interrupt>
+
+00000014 <__ctors_end>:
+  14:	11 24       	eor	r1, r1
+  16:	1f be       	out	0x3f, r1	; 63
+  18:	cf e9       	ldi	r28, 0x9F	; 159
+  1a:	cd bf       	out	0x3d, r28	; 61
+  1c:	02 d0       	rcall	.+4      	; 0x22 <main>
+  1e:	b2 c0       	rjmp	.+356    	; 0x184 <_exit>
+
+00000020 <__bad_interrupt>:
+  20:	ef cf       	rjmp	.-34     	; 0x0 <__vectors>
+
+00000022 <main>:
+
+int main(void)
+{
+	// Initialization //
+	// use DDRB to make four pins of port B as output
+	DDRB |= 1 << PB0;
+  22:	87 b3       	in	r24, 0x17	; 23
+  24:	81 60       	ori	r24, 0x01	; 1
+  26:	87 bb       	out	0x17, r24	; 23
+	DDRB |= 1 << PB1;
+  28:	87 b3       	in	r24, 0x17	; 23
+  2a:	82 60       	ori	r24, 0x02	; 2
+  2c:	87 bb       	out	0x17, r24	; 23
+	DDRB |= 1 << PB2;
+  2e:	87 b3       	in	r24, 0x17	; 23
+  30:	84 60       	ori	r24, 0x04	; 4
+  32:	87 bb       	out	0x17, r24	; 23
+	DDRB |= 1 << PB3;
+  34:	87 b3       	in	r24, 0x17	; 23
+  36:	88 60       	ori	r24, 0x08	; 8
+  38:	87 bb       	out	0x17, r24	; 23
+	
+	int counter; // declares the counter
+	
+	// Loop //
+	// start the counter and set the incrementation. counter should be in range 0 <= counter < 1000
+	for(counter=0; counter<1000; counter++) {
+  3a:	20 e0       	ldi	r18, 0x00	; 0
+  3c:	30 e0       	ldi	r19, 0x00	; 0
+  3e:	73 c0       	rjmp	.+230    	; 0x126 <__stack+0x87>
+		
+		// check if counter is divisible by 3 and 5, to turn on LED3 at PB2 then turn off.
+		if(counter%3 == 0 && counter%5 == 0) {
+  40:	c9 01       	movw	r24, r18
+  42:	63 e0       	ldi	r22, 0x03	; 3
+  44:	70 e0       	ldi	r23, 0x00	; 0
+  46:	77 d0       	rcall	.+238    	; 0x136 <__divmodhi4>
+  48:	fc 01       	movw	r30, r24
+  4a:	89 2b       	or	r24, r25
+  4c:	e1 f4       	brne	.+56     	; 0x86 <__DATA_REGION_LENGTH__+0x46>
+  4e:	c9 01       	movw	r24, r18
+  50:	65 e0       	ldi	r22, 0x05	; 5
+  52:	70 e0       	ldi	r23, 0x00	; 0
+  54:	70 d0       	rcall	.+224    	; 0x136 <__divmodhi4>
+  56:	89 2b       	or	r24, r25
+  58:	b1 f4       	brne	.+44     	; 0x86 <__DATA_REGION_LENGTH__+0x46>
+			PORTB = PORTB | (1<<PB2);
+  5a:	88 b3       	in	r24, 0x18	; 24
+  5c:	84 60       	ori	r24, 0x04	; 4
+  5e:	88 bb       	out	0x18, r24	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  60:	4f e9       	ldi	r20, 0x9F	; 159
+  62:	8a e7       	ldi	r24, 0x7A	; 122
+  64:	93 e0       	ldi	r25, 0x03	; 3
+  66:	41 50       	subi	r20, 0x01	; 1
+  68:	80 40       	sbci	r24, 0x00	; 0
+  6a:	90 40       	sbci	r25, 0x00	; 0
+  6c:	e1 f7       	brne	.-8      	; 0x66 <__DATA_REGION_LENGTH__+0x26>
+  6e:	00 c0       	rjmp	.+0      	; 0x70 <__DATA_REGION_LENGTH__+0x30>
+  70:	00 00       	nop
+			ON_DELAY;
+			PORTB = PORTB & ~(1<<PB2);
+  72:	88 b3       	in	r24, 0x18	; 24
+  74:	8b 7f       	andi	r24, 0xFB	; 251
+  76:	88 bb       	out	0x18, r24	; 24
+  78:	87 e9       	ldi	r24, 0x97	; 151
+  7a:	9a e3       	ldi	r25, 0x3A	; 58
+  7c:	01 97       	sbiw	r24, 0x01	; 1
+  7e:	f1 f7       	brne	.-4      	; 0x7c <__DATA_REGION_LENGTH__+0x3c>
+  80:	00 c0       	rjmp	.+0      	; 0x82 <__DATA_REGION_LENGTH__+0x42>
+  82:	00 00       	nop
+  84:	49 c0       	rjmp	.+146    	; 0x118 <__stack+0x79>
+			OFF_DELAY;
+		}
+		// check if counter is divisible by 3, to turn on LED1 at PB0 then turn off.
+		else if(counter%3==0) {
+  86:	ef 2b       	or	r30, r31
+  88:	b1 f4       	brne	.+44     	; 0xb6 <__stack+0x17>
+			PORTB = PORTB | (1<<PB0);
+  8a:	88 b3       	in	r24, 0x18	; 24
+  8c:	81 60       	ori	r24, 0x01	; 1
+  8e:	88 bb       	out	0x18, r24	; 24
+  90:	9f e9       	ldi	r25, 0x9F	; 159
+  92:	4a e7       	ldi	r20, 0x7A	; 122
+  94:	83 e0       	ldi	r24, 0x03	; 3
+  96:	91 50       	subi	r25, 0x01	; 1
+  98:	40 40       	sbci	r20, 0x00	; 0
+  9a:	80 40       	sbci	r24, 0x00	; 0
+  9c:	e1 f7       	brne	.-8      	; 0x96 <__DATA_REGION_LENGTH__+0x56>
+  9e:	00 c0       	rjmp	.+0      	; 0xa0 <__stack+0x1>
+  a0:	00 00       	nop
+			ON_DELAY;
+			PORTB = PORTB & ~(1<<PB0);
+  a2:	88 b3       	in	r24, 0x18	; 24
+  a4:	8e 7f       	andi	r24, 0xFE	; 254
+  a6:	88 bb       	out	0x18, r24	; 24
+  a8:	87 e9       	ldi	r24, 0x97	; 151
+  aa:	9a e3       	ldi	r25, 0x3A	; 58
+  ac:	01 97       	sbiw	r24, 0x01	; 1
+  ae:	f1 f7       	brne	.-4      	; 0xac <__stack+0xd>
+  b0:	00 c0       	rjmp	.+0      	; 0xb2 <__stack+0x13>
+  b2:	00 00       	nop
+  b4:	31 c0       	rjmp	.+98     	; 0x118 <__stack+0x79>
+			OFF_DELAY;
+		}
+		// check if counter is divisible by 5, to turn on LED2 at PB1 then turn off.
+		else if(counter%5==0) {
+  b6:	c9 01       	movw	r24, r18
+  b8:	65 e0       	ldi	r22, 0x05	; 5
+  ba:	70 e0       	ldi	r23, 0x00	; 0
+  bc:	3c d0       	rcall	.+120    	; 0x136 <__divmodhi4>
+  be:	89 2b       	or	r24, r25
+  c0:	b1 f4       	brne	.+44     	; 0xee <__stack+0x4f>
+			PORTB = PORTB | (1<<PB1);
+  c2:	88 b3       	in	r24, 0x18	; 24
+  c4:	82 60       	ori	r24, 0x02	; 2
+  c6:	88 bb       	out	0x18, r24	; 24
+  c8:	9f e9       	ldi	r25, 0x9F	; 159
+  ca:	4a e7       	ldi	r20, 0x7A	; 122
+  cc:	83 e0       	ldi	r24, 0x03	; 3
+  ce:	91 50       	subi	r25, 0x01	; 1
+  d0:	40 40       	sbci	r20, 0x00	; 0
+  d2:	80 40       	sbci	r24, 0x00	; 0
+  d4:	e1 f7       	brne	.-8      	; 0xce <__stack+0x2f>
+  d6:	00 c0       	rjmp	.+0      	; 0xd8 <__stack+0x39>
+  d8:	00 00       	nop
+			ON_DELAY;
+			PORTB = PORTB & ~(1<<PB1);
+  da:	88 b3       	in	r24, 0x18	; 24
+  dc:	8d 7f       	andi	r24, 0xFD	; 253
+  de:	88 bb       	out	0x18, r24	; 24
+  e0:	87 e9       	ldi	r24, 0x97	; 151
+  e2:	9a e3       	ldi	r25, 0x3A	; 58
+  e4:	01 97       	sbiw	r24, 0x01	; 1
+  e6:	f1 f7       	brne	.-4      	; 0xe4 <__stack+0x45>
+  e8:	00 c0       	rjmp	.+0      	; 0xea <__stack+0x4b>
+  ea:	00 00       	nop
+  ec:	15 c0       	rjmp	.+42     	; 0x118 <__stack+0x79>
+			OFF_DELAY;
+		// we shall turn on LED4 at PB3 if counter is neither divisible by 3 nor 5, then turn off.
+		} else {
+			PORTB = PORTB | (1<<PB3);
+  ee:	88 b3       	in	r24, 0x18	; 24
+  f0:	88 60       	ori	r24, 0x08	; 8
+  f2:	88 bb       	out	0x18, r24	; 24
+  f4:	9f e9       	ldi	r25, 0x9F	; 159
+  f6:	4a e7       	ldi	r20, 0x7A	; 122
+  f8:	83 e0       	ldi	r24, 0x03	; 3
+  fa:	91 50       	subi	r25, 0x01	; 1
+  fc:	40 40       	sbci	r20, 0x00	; 0
+  fe:	80 40       	sbci	r24, 0x00	; 0
+ 100:	e1 f7       	brne	.-8      	; 0xfa <__stack+0x5b>
+ 102:	00 c0       	rjmp	.+0      	; 0x104 <__stack+0x65>
+ 104:	00 00       	nop
+			ON_DELAY;
+			PORTB = PORTB & ~(1<<PB3);
+ 106:	88 b3       	in	r24, 0x18	; 24
+ 108:	87 7f       	andi	r24, 0xF7	; 247
+ 10a:	88 bb       	out	0x18, r24	; 24
+ 10c:	87 e9       	ldi	r24, 0x97	; 151
+ 10e:	9a e3       	ldi	r25, 0x3A	; 58
+ 110:	01 97       	sbiw	r24, 0x01	; 1
+ 112:	f1 f7       	brne	.-4      	; 0x110 <__stack+0x71>
+ 114:	00 c0       	rjmp	.+0      	; 0x116 <__stack+0x77>
+ 116:	00 00       	nop
+			OFF_DELAY;
+		}
+		
+		// check if counter > 100 then reset it to zero.
+		if(counter > 100) {
+ 118:	25 36       	cpi	r18, 0x65	; 101
+ 11a:	31 05       	cpc	r19, r1
+ 11c:	14 f0       	brlt	.+4      	; 0x122 <__stack+0x83>
+			counter = 0;
+ 11e:	20 e0       	ldi	r18, 0x00	; 0
+ 120:	30 e0       	ldi	r19, 0x00	; 0
+	
+	int counter; // declares the counter
+	
+	// Loop //
+	// start the counter and set the incrementation. counter should be in range 0 <= counter < 1000
+	for(counter=0; counter<1000; counter++) {
+ 122:	2f 5f       	subi	r18, 0xFF	; 255
+ 124:	3f 4f       	sbci	r19, 0xFF	; 255
+ 126:	28 3e       	cpi	r18, 0xE8	; 232
+ 128:	93 e0       	ldi	r25, 0x03	; 3
+ 12a:	39 07       	cpc	r19, r25
+ 12c:	0c f4       	brge	.+2      	; 0x130 <__stack+0x91>
+ 12e:	88 cf       	rjmp	.-240    	; 0x40 <__DATA_REGION_LENGTH__>
+		// check if counter > 100 then reset it to zero.
+		if(counter > 100) {
+			counter = 0;
+		}
+	}
+}
+ 130:	80 e0       	ldi	r24, 0x00	; 0
+ 132:	90 e0       	ldi	r25, 0x00	; 0
+ 134:	08 95       	ret
+
+00000136 <__divmodhi4>:
+ 136:	97 fb       	bst	r25, 7
+ 138:	07 2e       	mov	r0, r23
+ 13a:	16 f4       	brtc	.+4      	; 0x140 <__divmodhi4+0xa>
+ 13c:	00 94       	com	r0
+ 13e:	06 d0       	rcall	.+12     	; 0x14c <__divmodhi4_neg1>
+ 140:	77 fd       	sbrc	r23, 7
+ 142:	08 d0       	rcall	.+16     	; 0x154 <__divmodhi4_neg2>
+ 144:	0b d0       	rcall	.+22     	; 0x15c <__udivmodhi4>
+ 146:	07 fc       	sbrc	r0, 7
+ 148:	05 d0       	rcall	.+10     	; 0x154 <__divmodhi4_neg2>
+ 14a:	3e f4       	brtc	.+14     	; 0x15a <__divmodhi4_exit>
+
+0000014c <__divmodhi4_neg1>:
+ 14c:	90 95       	com	r25
+ 14e:	81 95       	neg	r24
+ 150:	9f 4f       	sbci	r25, 0xFF	; 255
+ 152:	08 95       	ret
+
+00000154 <__divmodhi4_neg2>:
+ 154:	70 95       	com	r23
+ 156:	61 95       	neg	r22
+ 158:	7f 4f       	sbci	r23, 0xFF	; 255
+
+0000015a <__divmodhi4_exit>:
+ 15a:	08 95       	ret
+
+0000015c <__udivmodhi4>:
+ 15c:	aa 1b       	sub	r26, r26
+ 15e:	bb 1b       	sub	r27, r27
+ 160:	51 e1       	ldi	r21, 0x11	; 17
+ 162:	07 c0       	rjmp	.+14     	; 0x172 <__udivmodhi4_ep>
+
+00000164 <__udivmodhi4_loop>:
+ 164:	aa 1f       	adc	r26, r26
+ 166:	bb 1f       	adc	r27, r27
+ 168:	a6 17       	cp	r26, r22
+ 16a:	b7 07       	cpc	r27, r23
+ 16c:	10 f0       	brcs	.+4      	; 0x172 <__udivmodhi4_ep>
+ 16e:	a6 1b       	sub	r26, r22
+ 170:	b7 0b       	sbc	r27, r23
+
+00000172 <__udivmodhi4_ep>:
+ 172:	88 1f       	adc	r24, r24
+ 174:	99 1f       	adc	r25, r25
+ 176:	5a 95       	dec	r21
+ 178:	a9 f7       	brne	.-22     	; 0x164 <__udivmodhi4_loop>
+ 17a:	80 95       	com	r24
+ 17c:	90 95       	com	r25
+ 17e:	bc 01       	movw	r22, r24
+ 180:	cd 01       	movw	r24, r26
+ 182:	08 95       	ret
+
+00000184 <_exit>:
+ 184:	f8 94       	cli
+
+00000186 <__stop_program>:
+ 186:	ff cf       	rjmp	.-2      	; 0x186 <__stop_program>
